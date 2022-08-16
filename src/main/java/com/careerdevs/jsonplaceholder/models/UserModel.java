@@ -3,8 +3,8 @@ package com.careerdevs.jsonplaceholder.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 //data that won't be specified in a model will be no longer received as a part of response
+@JsonInclude(JsonInclude.Include.NON_NULL) //if the value of fields is null, it will be ignored in final output, if the value is null, field won't be included in response
 public class UserModel {
-    @JsonInclude(JsonInclude.Include.NON_NULL) //if the value of fields is null, it will be ignored in final output, if the value is null, field won't be included in response
 
     private int id;
     private String name;

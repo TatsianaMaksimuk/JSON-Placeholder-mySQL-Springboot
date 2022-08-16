@@ -14,7 +14,7 @@ import javax.xml.transform.Source;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final String jsonPlaceholderEndpoint = "https://jsonplaceholder.typicode.com/users";
+    private final String jsonPlaceholderEndpointUsers = "https://jsonplaceholder.typicode.com/users";
 
     @RequestMapping("/")
     public String route() {
@@ -24,7 +24,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<?> getUsers(RestTemplate restTemplate) {
         try {
-            UserModel[] response = restTemplate.getForObject(jsonPlaceholderEndpoint, UserModel[].class);
+            UserModel[] response = restTemplate.getForObject(jsonPlaceholderEndpointUsers, UserModel[].class);
 
 
             for (int i = 0; i < response.length; i++) {
@@ -46,9 +46,9 @@ public class UserController {
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getUserById(RestTemplate restTemplate, @PathVariable String id) {
         try {
-            Integer.parseInt(id);
+
             System.out.println("Getting user with id: " + id);
-            String url = jsonPlaceholderEndpoint + "/" + id;
+            String url = jsonPlaceholderEndpointUsers + "/" + id;
             UserModel response = restTemplate.getForObject(url, UserModel.class);
             return ResponseEntity.ok(response);
             //when exception occurs in a try code block  it's going to go down the list of catch-statements
@@ -67,22 +67,6 @@ public class UserController {
         }
 
 
-    }
-
-    @GetMapping("/posts")
-    public Object postsHandler(RestTemplate restTemplate) {
-        return restTemplate.getForObject(jsonPlaceholderEndpoint + "/posts", Object.class);
-    }
-
-    @GetMapping("/photos")
-    public Object photoHandler(RestTemplate restTemplate) {
-        return restTemplate.getForObject(jsonPlaceholderEndpoint + "/photos", Object.class);
-
-    }
-
-    @GetMapping("/todos")
-    public Object toDoHandler(RestTemplate restTemplate) {
-        return restTemplate.getForObject(jsonPlaceholderEndpoint + "/todos", Object.class);
     }
 
 }
