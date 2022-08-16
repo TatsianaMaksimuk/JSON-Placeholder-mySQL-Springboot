@@ -27,10 +27,13 @@ public class UserController {
             UserModel[] response = restTemplate.getForObject(jsonPlaceholderEndpoint, UserModel[].class);
 
 
-//            for (int i = 0; i < response.length; i++) {
-//                UserModel user = response[i];
-//                System.out.println(user.getName());
-        //}
+            for (int i = 0; i < response.length; i++) {
+                UserModel user = response[i];
+                System.out.println(user.getName());
+                System.out.println(user.getCompany().getName());
+            }
+
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             System.out.println(e.getClass());
@@ -52,7 +55,7 @@ public class UserController {
             //the first one that matches the exception  that just occured will run that catch block
         } catch (NumberFormatException e) {
             return ResponseEntity.status(400).body("Invalid id: " + id);
-        }catch (HttpClientErrorException.NotFound e) {
+        } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.status(404).body("User Not Found With ID: " + id);
 
             //this catch statement is very general and all errors will fall under this exception,
@@ -62,7 +65,6 @@ public class UserController {
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
-
 
 
     }

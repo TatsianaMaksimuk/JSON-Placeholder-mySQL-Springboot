@@ -18,6 +18,10 @@ public class UserModel {
 
 
     public static class UserCompany {
+
+        private String name;
+        private String catchPhrase;
+        private String bs;
         public String getName() {
             return name;
         }
@@ -42,9 +46,6 @@ public class UserModel {
             this.bs = bs;
         }
 
-        private String name;
-        private String catchPhrase;
-        private String bs;
     }
 
     public int getId() {
