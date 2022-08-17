@@ -3,13 +3,13 @@ package com.careerdevs.jsonplaceholder.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostModel {
+public class PhotoModel {
+
 
     private int id;
-    private String userId;
+    private int albumId;
     private String title;
-    private String body;
-
+    private String url;
 
     public int getId() {
         return id;
@@ -19,12 +19,12 @@ public class PostModel {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public int getAlbumId() {
+        return albumId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setAlbumId(int albumId) {
+        this.albumId = albumId;
     }
 
     public String getTitle() {
@@ -35,12 +35,11 @@ public class PostModel {
         this.title = title;
     }
 
-    public String getBody() {
-        return body;
+    public String getUrl() {
+        return url;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setUrl(String url) {
+        this.url = url;
     }
-
 }
