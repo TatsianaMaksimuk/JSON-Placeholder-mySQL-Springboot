@@ -1,11 +1,11 @@
 package com.careerdevs.jsonplaceholder.controllers;
 
 import com.careerdevs.jsonplaceholder.models.UserModel;
+import org.apache.catalina.User;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,7 +46,7 @@ public class UserController {
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getUserById(RestTemplate restTemplate, @PathVariable String id) {
         try {
-
+            Integer.parseInt(id);
             System.out.println("Getting user with id: " + id);
             String url = jsonPlaceholderEndpointUsers + "/" + id;
             UserModel response = restTemplate.getForObject(url, UserModel.class);
@@ -69,6 +69,63 @@ public class UserController {
 
     }
 
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<?> deleteUserById (RestTemplate restTemplate, @PathVariable String id){
+        try {
+            Integer.parseInt(id);
+            System.out.println("Getting user with id: " + id);
+            String url = jsonPlaceholderEndpointUsers + "/" + id;
+            restTemplate.getForObject(url, UserModel.class);
+            restTemplate.delete(url);
+            return ResponseEntity.ok("User with ID "+ id + " was deleted");
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+    //POST localhost:8080/api/users
+    @PostMapping("/")
+    ResponseEntity<?> createNewUser(RestTemplate restTemplate, @RequestBody UserModel newUser){
+        try{
+
+            //todo: data validation
+
+            UserModel createdUser = restTemplate.postForObject(jsonPlaceholderEndpointUsers,newUser,UserModel.class);
+            return ResponseEntity.ok(createdUser);
+        }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+//    @PutMapping("/id/{id}")
+//    public ResponseEntity<?> updateUser(RestTemplate restTemplate, @RequestBody UserModel updateUserData, @PathVariable String id){
+//        try{
+//            Integer.parseInt(id);
+//            String url = jsonPlaceholderEndpointUsers + "/" + id;
+//            HttpEntity<UserModel> reqEntity =
+//           // restTemplate.put(url, updateUserData, UserModel.class );
+//            return restTemplate.exchange(url,HttpMethod.PUT,reqEntity,UserModel.class);
+//
+//        }  catch (NumberFormatException e) {
+//            return ResponseEntity.status(400).body("Invalid id: " + id);
+//        } catch (HttpClientErrorException.NotFound e) {
+//            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+//        } catch (Exception e) {
+//            System.out.println(e.getClass());
+//            System.out.println(e.getMessage());
+//            return ResponseEntity.internalServerError().body(e.getMessage());
+//        }
+//    }
 }
 
 
