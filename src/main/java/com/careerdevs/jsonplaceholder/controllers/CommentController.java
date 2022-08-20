@@ -1,6 +1,7 @@
 package com.careerdevs.jsonplaceholder.controllers;
 
 import com.careerdevs.jsonplaceholder.models.CommentModel;
+import com.careerdevs.jsonplaceholder.models.PhotoModel;
 import com.careerdevs.jsonplaceholder.models.ToDoModel;
 import com.careerdevs.jsonplaceholder.models.UserModel;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +60,18 @@ public class CommentController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
+    }
+
+    @PostMapping("/")
+    ResponseEntity<?> createNewComment(RestTemplate restTemplate, @RequestBody CommentModel newComment){
+        try{
+            //todo: data validation
+            CommentModel createdComment = restTemplate.postForObject(jsonPlaceholderEndpointComments,newComment,CommentModel.class);
+            return ResponseEntity.ok(createdComment);
+        }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

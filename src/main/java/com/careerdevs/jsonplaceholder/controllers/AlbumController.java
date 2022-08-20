@@ -58,4 +58,17 @@ public class AlbumController {
         }
 
     }
+
+    @PostMapping("/")
+    ResponseEntity<?> createNewAlbum(RestTemplate restTemplate, @RequestBody AlbumModel newAlbum){
+        try{
+            //todo: data validation
+            AlbumModel createdAlbum = restTemplate.postForObject(jsonPlaceholderEndpointAlbums,newAlbum,AlbumModel.class);
+            return ResponseEntity.ok(createdAlbum);
+        }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }

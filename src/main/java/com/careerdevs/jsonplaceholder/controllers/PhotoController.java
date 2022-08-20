@@ -2,6 +2,7 @@ package com.careerdevs.jsonplaceholder.controllers;
 
 import com.careerdevs.jsonplaceholder.models.CommentModel;
 import com.careerdevs.jsonplaceholder.models.PhotoModel;
+import com.careerdevs.jsonplaceholder.models.PostModel;
 import com.careerdevs.jsonplaceholder.models.UserModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,18 @@ public class PhotoController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
+    }
+    @PostMapping("/")
+    ResponseEntity<?> createNewPhoto(RestTemplate restTemplate, @RequestBody PhotoModel newPhoto){
+        try{
+            //todo: data validation
+            PhotoModel createdPhoto = restTemplate.postForObject(jsonPlaceholderEndpointPhotos,newPhoto,PhotoModel.class);
+            return ResponseEntity.ok(createdPhoto);
+        }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
 }
