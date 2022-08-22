@@ -107,25 +107,27 @@ public class UserController {
 
     }
 
-//    @PutMapping("/id/{id}")
-//    public ResponseEntity<?> updateUser(RestTemplate restTemplate, @RequestBody UserModel updateUserData, @PathVariable String id){
-//        try{
-//            Integer.parseInt(id);
-//            String url = jsonPlaceholderEndpointUsers + "/" + id;
-//            HttpEntity<UserModel> reqEntity =
-//           // restTemplate.put(url, updateUserData, UserModel.class );
-//            return restTemplate.exchange(url,HttpMethod.PUT,reqEntity,UserModel.class);
-//
-//        }  catch (NumberFormatException e) {
-//            return ResponseEntity.status(400).body("Invalid id: " + id);
-//        } catch (HttpClientErrorException.NotFound e) {
-//            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
-//        } catch (Exception e) {
-//            System.out.println(e.getClass());
-//            System.out.println(e.getMessage());
-//            return ResponseEntity.internalServerError().body(e.getMessage());
-//        }
-//    }
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updateUser(RestTemplate restTemplate, @RequestBody UserModel updateUserData, @PathVariable String id){
+        try{
+            Integer.parseInt(id);
+            String url = jsonPlaceholderEndpointUsers + "/" + id;
+            HttpEntity<UserModel> reqEntity = new HttpEntity<>(updateUserData);
+            ResponseEntity<UserModel> jphRes = restTemplate.exchange(url, HttpMethod.PUT, reqEntity, UserModel.class);
+
+
+            return ResponseEntity.ok(jphRes.getBody());
+
+        }  catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }
 
 
