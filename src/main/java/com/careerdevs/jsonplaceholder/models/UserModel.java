@@ -3,7 +3,8 @@ package com.careerdevs.jsonplaceholder.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 //data that won't be specified in a model will be no longer received as a part of response
-@JsonInclude(JsonInclude.Include.NON_NULL) //if the value of fields is null, it will be ignored in final output, if the value is null, field won't be included in response
+@JsonInclude(JsonInclude.Include.NON_NULL)
+//if the value of fields is null, it will be ignored in final output, if the value is null, field won't be included in response
 public class UserModel {
 
     private int id;
@@ -16,12 +17,14 @@ public class UserModel {
     //company is a nested object
     private UserCompany company;
 
-
+    //user company - inner class
     public static class UserCompany {
 
         private String name;
         private String catchPhrase;
         private String bs;
+
+
         public String getName() {
             return name;
         }
@@ -47,6 +50,54 @@ public class UserModel {
         }
 
     }
+
+
+    //did not generate setters for address
+    private UserAddress address;
+
+    public static class UserAddress {
+        private String suite;
+        private String city;
+        private String zipcode;
+
+
+
+        private AddressGeo geo;
+
+        public static class AddressGeo {
+
+            private String lng;
+            private String lat;
+
+            public String getLng() {
+                return lng;
+            }
+
+            public String getLat() {
+                return lat;
+            }
+
+        }
+
+        public String getSuite() {
+            return suite;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getZipcode() {
+            return zipcode;
+        }
+
+        public AddressGeo getGeo() {
+            return geo;
+        }
+
+
+    }
+
 
     public int getId() {
         return id;
@@ -105,6 +156,9 @@ public class UserModel {
     }
 
 
+    public UserAddress getAddress() {
+        return address;
+    }
 
 
 }
