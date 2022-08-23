@@ -2,6 +2,8 @@ package com.careerdevs.jsonplaceholder.controllers;
 
 import com.careerdevs.jsonplaceholder.models.ToDoModel;
 import com.careerdevs.jsonplaceholder.models.UserModel;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -64,6 +66,28 @@ public class ToDoController {
             ToDoModel createdToDo = restTemplate.postForObject(jsonPlaceholderEndpointToDos,newToDo,ToDoModel.class);
             return ResponseEntity.ok(createdToDo);
         }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updateToDo(RestTemplate restTemplate, @RequestBody ToDoModel updateToDoData, @PathVariable String id){
+        try{
+            Integer.parseInt(id);
+            String url = jsonPlaceholderEndpointToDos + "/" + id;
+            HttpEntity<ToDoModel> reqEntity = new HttpEntity<>(updateToDoData);
+            ResponseEntity<ToDoModel> jphRes = restTemplate.exchange(url, HttpMethod.PUT, reqEntity, ToDoModel.class);
+
+
+            return ResponseEntity.ok(jphRes.getBody());
+
+        }  catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("ToDo Not Found With ID: " + id);
+        } catch (Exception e) {
             System.out.println(e.getClass());
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());

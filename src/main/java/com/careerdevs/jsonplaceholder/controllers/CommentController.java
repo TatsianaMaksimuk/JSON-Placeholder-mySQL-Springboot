@@ -1,9 +1,8 @@
 package com.careerdevs.jsonplaceholder.controllers;
 
-import com.careerdevs.jsonplaceholder.models.CommentModel;
-import com.careerdevs.jsonplaceholder.models.PhotoModel;
-import com.careerdevs.jsonplaceholder.models.ToDoModel;
-import com.careerdevs.jsonplaceholder.models.UserModel;
+import com.careerdevs.jsonplaceholder.models.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -69,6 +68,29 @@ public class CommentController {
             CommentModel createdComment = restTemplate.postForObject(jsonPlaceholderEndpointComments,newComment,CommentModel.class);
             return ResponseEntity.ok(createdComment);
         }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updateComment(RestTemplate restTemplate, @RequestBody CommentModel updateCommentData, @PathVariable String id){
+        try{
+            Integer.parseInt(id);
+            String url = jsonPlaceholderEndpointComments + "/" + id;
+            HttpEntity<CommentModel> reqEntity = new HttpEntity<>(updateCommentData);
+            ResponseEntity<CommentModel> jphRes = restTemplate.exchange(url, HttpMethod.PUT, reqEntity, CommentModel.class);
+
+
+            return ResponseEntity.ok(jphRes.getBody());
+
+        }  catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("Comment Not Found With ID: " + id);
+        } catch (Exception e) {
             System.out.println(e.getClass());
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());

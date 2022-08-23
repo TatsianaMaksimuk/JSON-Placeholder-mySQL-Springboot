@@ -4,6 +4,8 @@ import com.careerdevs.jsonplaceholder.models.CommentModel;
 import com.careerdevs.jsonplaceholder.models.PhotoModel;
 import com.careerdevs.jsonplaceholder.models.PostModel;
 import com.careerdevs.jsonplaceholder.models.UserModel;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -66,6 +68,28 @@ public class PhotoController {
             PhotoModel createdPhoto = restTemplate.postForObject(jsonPlaceholderEndpointPhotos,newPhoto,PhotoModel.class);
             return ResponseEntity.ok(createdPhoto);
         }catch (Exception e){
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updatePhoto(RestTemplate restTemplate, @RequestBody PhotoModel updatePhotoData, @PathVariable String id){
+        try{
+            Integer.parseInt(id);
+            String url = jsonPlaceholderEndpointPhotos + "/" + id;
+            HttpEntity<PhotoModel> reqEntity = new HttpEntity<>(updatePhotoData);
+            ResponseEntity<PhotoModel> jphRes = restTemplate.exchange(url, HttpMethod.PUT, reqEntity, PhotoModel.class);
+
+
+            return ResponseEntity.ok(jphRes.getBody());
+
+        }  catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("Photo Not Found With ID: " + id);
+        } catch (Exception e) {
             System.out.println(e.getClass());
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());

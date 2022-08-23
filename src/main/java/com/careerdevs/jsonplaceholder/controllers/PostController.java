@@ -3,6 +3,8 @@ package com.careerdevs.jsonplaceholder.controllers;
 import com.careerdevs.jsonplaceholder.models.PostModel;
 import com.careerdevs.jsonplaceholder.models.ToDoModel;
 import com.careerdevs.jsonplaceholder.models.UserModel;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -74,4 +76,25 @@ public class PostController {
         }
     }
 
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updatePost(RestTemplate restTemplate, @RequestBody PostModel updatePostData, @PathVariable String id){
+        try{
+            Integer.parseInt(id);
+            String url = jsonPlaceholderEndpointPosts + "/" + id;
+            HttpEntity<PostModel> reqEntity = new HttpEntity<>(updatePostData);
+            ResponseEntity<PostModel> jphRes = restTemplate.exchange(url, HttpMethod.PUT, reqEntity, PostModel.class);
+
+
+            return ResponseEntity.ok(jphRes.getBody());
+
+        }  catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("Invalid id: " + id);
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("Post Not Found With ID: " + id);
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }
