@@ -1,4 +1,4 @@
-package careerdevs.example.jphsql;
+package careerdevs.jphsql;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
