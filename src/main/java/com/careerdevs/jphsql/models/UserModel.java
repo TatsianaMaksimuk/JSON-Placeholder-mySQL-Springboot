@@ -15,8 +15,14 @@ public class UserModel {
     private String phone;
     private String website;
 
+
+
     public int getId() {
         return id;
+    }
+
+    public void removeID(){
+        id = 0;
     }
 
     public String getName() {
