@@ -25,7 +25,10 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    //getting comments from jsonplaceholder API
+
+
+    //GET
+    //Getting all users from jsonplaceholder API
     @GetMapping("/jph/all")
     public ResponseEntity<?> getAllUsersAPI(RestTemplate restTemplate) {
         try {
@@ -39,7 +42,7 @@ public class UserController {
 
     }
 
-    //getting comment by ID from jsonPlaceholder API
+    //Getting user by ID from jsonPlaceholder API
     @GetMapping("/jph/id/{id}")
     public ResponseEntity<?> getUserByIdFromAPI(RestTemplate restTemplate, @PathVariable String id) {
         try {
@@ -59,7 +62,7 @@ public class UserController {
 
     }
 
-    //getting comments from local SQLDataBase
+    //Getting all users from local SQLDataBase
     @GetMapping("/sql/all")
     public ResponseEntity<?> getAllUsersFromSQL() {
         try {
@@ -73,53 +76,7 @@ public class UserController {
 
     }
 
-
-
-    @DeleteMapping("/sql/all")
-    public ResponseEntity<?> deleteAllUsersFromSQL(RestTemplate restTemplate) {
-        try {
-            long count = userRepository.count();
-            userRepository.deleteAll();
-            return ResponseEntity.ok("Deleted Users" + count);
-
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-
-    }
-
-
-    @DeleteMapping("/sql/{id}")
-    public ResponseEntity<?> deleteUserByIdFromSQL(@PathVariable String id) {
-        try {
-
-            // throws NumberFormatException if id is not a int
-            int userId = Integer.parseInt(id);
-
-            Optional<UserModel> foundUser = userRepository.findById(userId);
-
-            if (foundUser.isEmpty()) return ResponseEntity.status(404).body("User Not Found With ID: " + id);
-            //if (foundUser.isEmpty()) throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-
-            userRepository.deleteById(userId);
-
-
-            return ResponseEntity.ok(foundUser.get());
-
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
-
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
-
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-    }
+    //Getting user by ID from DQL database
     @GetMapping("/sql/{id}")
     public ResponseEntity<?> getOneUserByIdFromSQL(@PathVariable String id) {
         try {
@@ -147,6 +104,10 @@ public class UserController {
     }
 
 
+
+
+    //POST
+    //Posting all users to sql database
     @PostMapping("/all")
     public ResponseEntity<?> uploadAllUsersToSQL(RestTemplate restTemplate) {
         try {
@@ -177,6 +138,7 @@ public class UserController {
 
     }
 
+    //Posting ONE user to sql database
     @PostMapping
     public ResponseEntity<?> uploadOneUserToSQL(@RequestBody UserModel newUserData) {
         try {
@@ -191,5 +153,58 @@ public class UserController {
 
     }
 
+    //DELETE
+    //deleting all users from sql
+    @DeleteMapping("/sql/all")
+    public ResponseEntity<?> deleteAllUsersFromSQL(RestTemplate restTemplate) {
+        try {
+            long count = userRepository.count();
+            userRepository.deleteAll();
+            return ResponseEntity.ok("Deleted Users" + count);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+
+    //Delete one user from sql database
+    @DeleteMapping("/sql/{id}")
+    public ResponseEntity<?> deleteUserByIdFromSQL(@PathVariable String id) {
+        try {
+
+            // throws NumberFormatException if id is not a int
+            int userId = Integer.parseInt(id);
+
+            Optional<UserModel> foundUser = userRepository.findById(userId);
+
+            if (foundUser.isEmpty()) return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+            //if (foundUser.isEmpty()) throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+
+            userRepository.deleteById(userId);
+
+
+            return ResponseEntity.ok(foundUser.get());
+
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
 }
+
+
+
+
+
