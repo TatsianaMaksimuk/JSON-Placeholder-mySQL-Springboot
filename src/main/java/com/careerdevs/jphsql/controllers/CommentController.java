@@ -24,9 +24,10 @@ public class CommentController {
 
 
     //GET
+    //
     //Getting all comments from jph API
     @GetMapping("/jph/all")
-    public ResponseEntity<?> getAllCommentsAPI(RestTemplate restTemplate) {
+    public ResponseEntity<?> getAllCommentsFromAPI(RestTemplate restTemplate) {
         try {
             CommentModel[] response = restTemplate.getForObject(JPH_API_URL, CommentModel[].class);
             return ResponseEntity.ok(response);
@@ -34,19 +35,6 @@ public class CommentController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
-    }
-
-    //Getting allComments from SQL
-    @RequestMapping("/sql/all")
-    public ResponseEntity<?> getAllCommentsFromSQL() {
-        try {
-            ArrayList<CommentModel> allComments = (ArrayList<CommentModel>) commentRepository.findAll();
-            return ResponseEntity.ok(allComments);
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
     }
 
     // finding max body length for comment to make characters limit in db higher:
@@ -84,7 +72,7 @@ public class CommentController {
             CommentModel response = restTemplate.getForObject(JPH_API_URL + "/" + id, CommentModel.class);
             return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(400).body("Invalid Id: " + id);
+            return ResponseEntity.status(400).body("Invalid ID: " + id);
         } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.status(400).body("Comment not Found With ID: " + id);
         } catch (Exception e) {
@@ -92,7 +80,26 @@ public class CommentController {
         }
     }
 
+    //Getting allComments from SQL
+    @RequestMapping("/sql/all")
+    public ResponseEntity<?> getAllCommentsFromSQL() {
+        try {
+            ArrayList<CommentModel> allComments = (ArrayList<CommentModel>) commentRepository.findAll();
+            return ResponseEntity.ok(allComments);
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
+
+//Getting comment by ID from SQL database
+
+
+    //POST
+    //
+    //Posting all comments to sql database
     @PostMapping("/all")
     public ResponseEntity<?> uploadAllCommentsToSQL(RestTemplate restTemplate) {
         try {
@@ -116,6 +123,7 @@ public class CommentController {
 
     }
 
+    //Posting ONE comment to sql database
     @PostMapping()
     public ResponseEntity<?> uploadOneCommentToSQL(@RequestBody CommentModel newCommentData) {
         try {
@@ -129,5 +137,10 @@ public class CommentController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    //DELETE
+    //
+    //Deleting all comments from sql
+    //Delete one comment from sql database
 }
 

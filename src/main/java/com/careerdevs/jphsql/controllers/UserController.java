@@ -35,8 +35,6 @@ public class UserController {
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
             return ResponseEntity.ok(allUsers);
         } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
@@ -76,7 +74,7 @@ public class UserController {
 
     }
 
-    //Getting user by ID from SQL database
+    //Getting one user by ID from SQL database
     @GetMapping("/sql/{id}")
     public ResponseEntity<?> getOneUserByIdFromSQL(@PathVariable String id) {
         try {
