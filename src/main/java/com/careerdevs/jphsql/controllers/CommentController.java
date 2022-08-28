@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Scanner;
 
 
-
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -50,6 +49,32 @@ public class CommentController {
         }
     }
 
+    // finding max body length for comment to make characters limit in db higher:
+    @GetMapping("/findBodyMax")
+    public ResponseEntity<?> findBodyMax(RestTemplate restTemplate) {
+        try {
+
+            CommentModel[] allComments = restTemplate.getForObject(JPH_API_URL, CommentModel[].class);
+            assert allComments != null;
+
+            int maxLen = 0;
+            for (CommentModel comment : allComments
+            ) {
+                if (comment.getBody().length() > maxLen) {
+                    maxLen = comment.getBody().length();
+                }
+            }
+
+
+            return ResponseEntity.ok("Max Length Body:" + maxLen);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
 
     //Getting one comment by ID from jph API
     @GetMapping("/jph/id/{id}")
@@ -69,19 +94,21 @@ public class CommentController {
 
 
     @PostMapping("/all")
-    public ResponseEntity<?> uploadAllCommentsToSQL (RestTemplate restTemplate) {
+    public ResponseEntity<?> uploadAllCommentsToSQL(RestTemplate restTemplate) {
         try {
             CommentModel[] allComments = restTemplate.getForObject(JPH_API_URL, CommentModel[].class);
 
             assert allComments != null;
 
-            for (CommentModel comment: allComments) {comment.removeID();}
+            for (CommentModel comment : allComments) {
+                comment.removeID();
+            }
 
             commentRepository.saveAll(Arrays.asList(allComments));
 
 
             return ResponseEntity.ok(allComments);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getClass());
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -90,13 +117,13 @@ public class CommentController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> uploadOneCommentToSQL (@RequestBody CommentModel newCommentData){
-        try{
+    public ResponseEntity<?> uploadOneCommentToSQL(@RequestBody CommentModel newCommentData) {
+        try {
             newCommentData.removeID();
             CommentModel savedComment = commentRepository.save(newCommentData);
             return ResponseEntity.ok(savedComment);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getClass());
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());

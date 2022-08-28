@@ -76,7 +76,7 @@ public class UserController {
 
     }
 
-    //Getting user by ID from DQL database
+    //Getting user by ID from SQL database
     @GetMapping("/sql/{id}")
     public ResponseEntity<?> getOneUserByIdFromSQL(@PathVariable String id) {
         try {

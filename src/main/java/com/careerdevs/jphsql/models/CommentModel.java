@@ -11,6 +11,8 @@ public class CommentModel {
 
     private int postId;
     private String name;
+
+    @Column(length = 512)//default length is 255. Column - each field in sql db
     private String body;
     private String email;
 
