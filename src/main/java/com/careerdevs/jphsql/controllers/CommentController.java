@@ -3,16 +3,14 @@ package com.careerdevs.jphsql.controllers;
 import com.careerdevs.jphsql.models.CommentModel;
 import com.careerdevs.jphsql.models.UserModel;
 import com.careerdevs.jphsql.repositories.CommentRepository;
+import com.careerdevs.jphsql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 @RestController
@@ -141,6 +139,34 @@ public class CommentController {
     //DELETE
     //
     //Deleting all comments from sql
+    @DeleteMapping("/sql/all")
+    public ResponseEntity<?> deleteAllCommentsFromSQL(RestTemplate restTemplate){
+        try{
+            long count = commentRepository.count();
+            commentRepository.deleteAll();
+            return ResponseEntity.ok("Deleted comments:" + count);
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
     //Delete one comment from sql database
+    @DeleteMapping("/sql/id/{id}")
+    public ResponseEntity<?> deleteOneCommentByIdFromSQL(@PathVariable String id){
+        try{
+           int commentId= Integer.parseInt(id);
+            Optional<CommentModel> foundComment = commentRepository.findById(commentId);
+            if (foundComment.isEmpty()) return ResponseEntity.status(404).body("Comment Not Found with Id: " + commentId);
+            commentRepository.deleteById(commentId);
+            return ResponseEntity.ok(foundComment.get());
+        } catch (NumberFormatException e){
+            return ResponseEntity.status(400).body("ID: "+ id + ", is not a valid id. Must be a whole number");
+        }catch (HttpClientErrorException e){
+            return ResponseEntity.status(400).body("Comment Not Found With ID: " + id);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }
 
