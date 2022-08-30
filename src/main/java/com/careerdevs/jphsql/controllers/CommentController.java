@@ -85,13 +85,23 @@ public class CommentController {
             ArrayList<CommentModel> allComments = (ArrayList<CommentModel>) commentRepository.findAll();
             return ResponseEntity.ok(allComments);
         } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
-
+    @RequestMapping("/sql/id/{id}")
+    public ResponseEntity<?> getOneCommentFromSQL(@PathVariable String id) {
+        try {
+            int commentID = Integer.parseInt(id);
+            Optional<CommentModel> foundComment = commentRepository.findById(commentID);
+            if (foundComment.isEmpty()) return ResponseEntity.status(404).body("Comment Not Found With ID: " + id);
+            return ResponseEntity.ok(foundComment.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 //Getting comment by ID from SQL database
 
 
@@ -140,12 +150,12 @@ public class CommentController {
     //
     //Deleting all comments from sql
     @DeleteMapping("/sql/all")
-    public ResponseEntity<?> deleteAllCommentsFromSQL(RestTemplate restTemplate){
-        try{
+    public ResponseEntity<?> deleteAllCommentsFromSQL(RestTemplate restTemplate) {
+        try {
             long count = commentRepository.count();
             commentRepository.deleteAll();
             return ResponseEntity.ok("Deleted comments:" + count);
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
@@ -153,18 +163,19 @@ public class CommentController {
 
     //Delete one comment from sql database
     @DeleteMapping("/sql/id/{id}")
-    public ResponseEntity<?> deleteOneCommentByIdFromSQL(@PathVariable String id){
-        try{
-           int commentId= Integer.parseInt(id);
+    public ResponseEntity<?> deleteOneCommentByIdFromSQL(@PathVariable String id) {
+        try {
+            int commentId = Integer.parseInt(id);
             Optional<CommentModel> foundComment = commentRepository.findById(commentId);
-            if (foundComment.isEmpty()) return ResponseEntity.status(404).body("Comment Not Found with Id: " + commentId);
+            if (foundComment.isEmpty())
+                return ResponseEntity.status(404).body("Comment Not Found with Id: " + commentId);
             commentRepository.deleteById(commentId);
             return ResponseEntity.ok(foundComment.get());
-        } catch (NumberFormatException e){
-            return ResponseEntity.status(400).body("ID: "+ id + ", is not a valid id. Must be a whole number");
-        }catch (HttpClientErrorException e){
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (HttpClientErrorException e) {
             return ResponseEntity.status(400).body("Comment Not Found With ID: " + id);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

@@ -41,7 +41,7 @@ public class PostController {
     public ResponseEntity<?> getPostByIdFromAPI(RestTemplate restTemplate, @PathVariable String id) {
         try {
             Integer.parseInt(id);
-            PostModel response = restTemplate.getForObject(JPH_API_URL + id, PostModel.class);
+            PostModel response = restTemplate.getForObject(JPH_API_URL + '/'+id, PostModel.class);
             return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
             return ResponseEntity.status(400).body("Invalid ID: " + id);
@@ -64,16 +64,15 @@ public class PostController {
     }
 
     //Getting post by ID from SQL database
-    @GetMapping("/sql/id{id}")
+    @GetMapping("/sql/id/{id}")
     public ResponseEntity<?> getOnePostByIdFromSQL(@PathVariable String id) {
         try {
             int postId = Integer.parseInt(id);
             Optional<PostModel> foundPost = postRepository.findById(postId);
+            if (foundPost.isEmpty()) return ResponseEntity.status(404).body("Post Not found With ID: "+ id);
             return ResponseEntity.ok(foundPost.get());
         } catch (NumberFormatException e) {
             return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
-        } catch (HttpClientErrorException e) {
-            return ResponseEntity.status(400).body("Comment Not Found With ID: " + id);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
@@ -140,8 +139,6 @@ public class PostController {
             return ResponseEntity.ok(foundPost.get());
         }catch (NumberFormatException e){
             return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
-        }catch (HttpClientErrorException e){
-            return ResponseEntity.status(400).body("Post Not Found With ID: " + id);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

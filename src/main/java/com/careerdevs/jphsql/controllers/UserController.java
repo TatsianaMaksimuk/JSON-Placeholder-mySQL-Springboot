@@ -18,13 +18,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3500")
 public class UserController {
 
     private final String JPH_API_URL = "https://jsonplaceholder.typicode.com/users";
 
     @Autowired
     private UserRepository userRepository;
-
 
 
     //GET
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     //Getting one user by ID from SQL database
-    @GetMapping("/sql/{id}")
+    @GetMapping("/sql/id/{id}")
     public ResponseEntity<?> getOneUserByIdFromSQL(@PathVariable String id) {
         try {
 
@@ -91,17 +91,10 @@ public class UserController {
         } catch (NumberFormatException e) {
             return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
 
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.status(404).body("User Not Found With ID: " + id);
-
         } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-
-
 
 
     //POST
@@ -170,7 +163,7 @@ public class UserController {
 
 
     //Delete one user from sql database
-    @DeleteMapping("/sql/{id}")
+    @DeleteMapping("/sql/id/{id}")
     public ResponseEntity<?> deleteUserByIdFromSQL(@PathVariable String id) {
         try {
 
@@ -200,8 +193,26 @@ public class UserController {
         }
     }
 
-}
+    //PUT
+    //Put one user by ID (SQL)-make sure a user with the given id already exists
+    @PutMapping("/sql/id/{id}")
+    public ResponseEntity<?> updateOneUserInSQL(@PathVariable String id, @RequestBody UserModel updateUserData) {
+        try {
+            int userId = Integer.parseInt(id);
+            Optional<UserModel> foundUser = userRepository.findById(userId);
+            if (foundUser.isEmpty()) return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+            if (userId != updateUserData.getId()) return ResponseEntity.status(400).body("User IDs dod not match");
+            userRepository.save(updateUserData);
+            return ResponseEntity.ok(foundUser.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
+
+}
 
 
 
