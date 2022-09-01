@@ -99,7 +99,7 @@ public class UserController {
 
     //POST
     //Posting all users to sql database
-    @PostMapping("/all")
+    @PostMapping("/sql/all")
     public ResponseEntity<?> uploadAllUsersToSQL(RestTemplate restTemplate) {
         try {
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
