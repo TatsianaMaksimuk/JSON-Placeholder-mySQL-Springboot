@@ -1,6 +1,7 @@
 package com.careerdevs.jphsql.controllers;
 
 import com.careerdevs.jphsql.models.AlbumModel;
+import com.careerdevs.jphsql.models.CommentModel;
 import com.careerdevs.jphsql.models.UserModel;
 import com.careerdevs.jphsql.repositories.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,7 @@ public class AlbumController {
 
     }
 
-    //Posting ONE comment to sql database
+    //Posting ONE album to sql database
     @PostMapping
     public ResponseEntity<?> uploadOneAlbumToSQL (@RequestBody AlbumModel newAlbumData){
         try{
@@ -123,8 +124,56 @@ public class AlbumController {
 
     //DELETE
     //
-    //Deleting all comments from sql
-    //Delete one user from sql database
+    //Deleting all albums from sql
+    @DeleteMapping("/sql/all")
+    public ResponseEntity<?> deleteAllAlbumsFromSQL (){
+        try {
+            long count = albumRepository.count();
+            albumRepository.deleteAll();
+            return ResponseEntity.ok("Deleted Albums: " + count);
+        } catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    //Delete one album from sql database
+
+    @DeleteMapping("/sql/id/{id}")
+    public ResponseEntity<?> deleteOneAlbumByIdFromSQL(@PathVariable String id) {
+        try {
+            int albumId = Integer.parseInt(id);
+            Optional<AlbumModel> foundAlbum = albumRepository.findById(albumId);
+            if (foundAlbum.isEmpty())
+                return ResponseEntity.status(404).body("Album Not Found with Id: " + albumId);
+            albumRepository.deleteById(albumId);
+            return ResponseEntity.ok(foundAlbum.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity.status(400).body("Comment Not Found With ID: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
     //PUT
-    //Put one user by ID (SQL)-make sure a user with the given id already exists
+    //Put one album by ID (SQL)-make sure a user with the given id already exists
+
+    @PutMapping("/sql/id/{id}")
+    public ResponseEntity<?> updateOneAlbumInSQL(@PathVariable String id, @RequestBody AlbumModel updateAlbumData) {
+        try {
+            int albumId = Integer.parseInt(id);
+            Optional<AlbumModel> foundAlbum = albumRepository.findById(albumId);
+            if (foundAlbum.isEmpty()) return ResponseEntity.status(404).body("Album Not Found With ID: " + id);
+            if (albumId != updateAlbumData.getId()) return ResponseEntity.status(400).body("Album IDs dod not match");
+            albumRepository.save(updateAlbumData);
+            return ResponseEntity.ok(foundAlbum.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
 }

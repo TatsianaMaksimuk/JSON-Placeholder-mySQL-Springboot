@@ -1,6 +1,7 @@
 package com.careerdevs.jphsql.controllers;
 
 import com.careerdevs.jphsql.models.PostModel;
+import com.careerdevs.jphsql.models.UserModel;
 import com.careerdevs.jphsql.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -118,7 +119,7 @@ public class PostController {
     //
     //Deleting all posts from sql
     @DeleteMapping("/sql/all")
-    public ResponseEntity<?> deleteAllPostsFromSQL (RestTemplate restTemplate){
+    public ResponseEntity<?> deleteAllPostsFromSQL (){
         try {
             long count = postRepository.count();
             postRepository.deleteAll();
@@ -143,6 +144,25 @@ public class PostController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    //PUT
+    //Put one POST by ID (SQL)-make sure a user with the given id already exists
+    @PutMapping("/sql/id/{id}")
+    public ResponseEntity<?> updateOneUserInSQL(@PathVariable String id, @RequestBody PostModel updatePostData) {
+        try {
+            int postId = Integer.parseInt(id);
+            Optional<PostModel> foundPost = postRepository.findById(postId);
+            if (foundPost.isEmpty()) return ResponseEntity.status(404).body("Post Not Found With ID: " + id);
+            if (postId  != updatePostData.getId()) return ResponseEntity.status(400).body("User IDs dod not match");
+            postRepository.save(updatePostData);
+            return ResponseEntity.ok(foundPost.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
 
 
 }

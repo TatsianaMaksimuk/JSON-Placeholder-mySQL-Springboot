@@ -150,7 +150,7 @@ public class CommentController {
     //
     //Deleting all comments from sql
     @DeleteMapping("/sql/all")
-    public ResponseEntity<?> deleteAllCommentsFromSQL(RestTemplate restTemplate) {
+    public ResponseEntity<?> deleteAllCommentsFromSQL() {
         try {
             long count = commentRepository.count();
             commentRepository.deleteAll();
@@ -179,5 +179,26 @@ public class CommentController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    //PUT
+    //Put one comment by ID (SQL)-make sure a user with the given id already exists
+    @PutMapping("/sql/id/{id}")
+    public ResponseEntity<?> updateOneCommentInSQL(@PathVariable String id, @RequestBody CommentModel updateCommentData) {
+        try {
+            int commentId = Integer.parseInt(id);
+            Optional<CommentModel> foundComment = commentRepository.findById(commentId);
+            if (foundComment.isEmpty()) return ResponseEntity.status(404).body("Comment Not Found With ID: " + id);
+            if (commentId != updateCommentData.getId()) return ResponseEntity.status(400).body("Comment IDs did not match");
+            commentRepository.save(updateCommentData);
+            return ResponseEntity.ok(foundComment.get());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
+
 }
 

@@ -147,7 +147,7 @@ public class UserController {
     //DELETE
     //deleting all users from sql
     @DeleteMapping("/sql/all")
-    public ResponseEntity<?> deleteAllUsersFromSQL(RestTemplate restTemplate) {
+    public ResponseEntity<?> deleteAllUsersFromSQL() {
         try {
             long count = userRepository.count();
             userRepository.deleteAll();
