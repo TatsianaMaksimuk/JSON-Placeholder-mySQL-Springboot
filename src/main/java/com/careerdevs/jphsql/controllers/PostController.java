@@ -16,11 +16,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
+@CrossOrigin(origins = "http://localhost:3500")
 public class PostController {
 
     private final String JPH_API_URL = "https://jsonplaceholder.typicode.com/posts";
-
-
     @Autowired
     private PostRepository postRepository;
 

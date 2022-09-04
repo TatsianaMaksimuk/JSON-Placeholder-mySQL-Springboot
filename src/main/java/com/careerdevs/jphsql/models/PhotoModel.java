@@ -5,34 +5,36 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import javax.persistence.*;
 
 @Entity
-@Table(name="Album")
+@Table(name="Photo")
 @CrossOrigin(origins = "http://localhost:3500")
-public class AlbumModel {
-
+public class PhotoModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    private int albumId;
     private String title;
-    private int userId;
+    private String url;
+
 
     public int getId() {
         return id;
     }
-    public void removeID(){
+
+    public void removeId(){
         id = 0;
     }
 
-    public void removeId() {
-        id = 0;
+    public int getAlbumId() {
+        return albumId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUrl() {
+        return url;
     }
-
 
 }

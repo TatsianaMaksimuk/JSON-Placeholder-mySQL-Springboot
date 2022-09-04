@@ -15,6 +15,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/comments")
+@CrossOrigin(origins = "http://localhost:3500")
 public class CommentController {
     private final String JPH_API_URL = "https://jsonplaceholder.typicode.com/comments";
     @Autowired

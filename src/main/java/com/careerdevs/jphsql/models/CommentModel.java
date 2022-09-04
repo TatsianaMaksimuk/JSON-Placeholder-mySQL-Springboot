@@ -1,9 +1,12 @@
 package com.careerdevs.jphsql.models;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name="Comment")
+@CrossOrigin(origins = "http://localhost:3500")
 public class CommentModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

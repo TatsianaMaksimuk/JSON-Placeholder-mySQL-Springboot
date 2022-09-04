@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/albums")
+@CrossOrigin(origins = "http://localhost:3500")
 public class AlbumController {
     private final String JPH_API_URL = "https://jsonplaceholder.typicode.com/albums";
 
