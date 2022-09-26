@@ -81,7 +81,7 @@ public class PostController {
     //POST
     //
     //Posting all posts to sql database
-    @PostMapping("/all")
+    @PostMapping("/sql/all")
     public ResponseEntity<?> uploadAllPostsToSQL(RestTemplate restTemplate) {
         try {
             //1)get all Post from API
